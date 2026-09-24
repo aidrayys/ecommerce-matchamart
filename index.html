@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MatchaMart</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">🍵 MatchaMart</div>
+
+  <div class="cart">
+    🛒 Cart : <span id="cart-count">0</span>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Premium Matcha & Coffee Store</h1>
+  <p>Fresh drinks, desserts, and merchandise.</p>
+</section>
+
+<section class="toolbar">
+
+  <input
+    type="text"
+    id="search"
+    placeholder="🔍 Search product..."
+  >
+
+  <select id="category">
+    <option value="all">All Categories</option>
+    <option value="Drink">Drink</option>
+    <option value="Dessert">Dessert</option>
+    <option value="Merch">Merch</option>
+  </select>
+
+</section>
+
+<main>
+
+  <div id="product-list" class="products"></div>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
