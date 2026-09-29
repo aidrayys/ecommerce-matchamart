@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>MatchaMart</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
 <header>
   <div class="logo">🍵 MatchaMart</div>
 
-  <div class="cart">
+  <div class="cart" id="cart-trigger" role="button" tabindex="0" title="Click to view cart">
     🛒 Cart : <span id="cart-count">0</span>
   </div>
 </header>
@@ -44,7 +47,70 @@
 
 </main>
 
-<script src="script.js"></script>
+<!-- Product Customization Modal -->
+<div class="modal-overlay" id="customization-modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <h2 id="modal-title">Add to Cart</h2>
+      <button type="button" class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-product">
+        <img id="modal-image" src="" alt="">
+        <div class="modal-product-info">
+          <h3 id="modal-name"></h3>
+          <div class="modal-price" id="modal-price"></div>
+          <div class="modal-category" id="modal-category"></div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Customization Options</h4>
+        <div id="modal-options"></div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Quantity</h4>
+        <div class="quantity-selector">
+          <button type="button" class="qty-btn" id="modal-qty-minus" aria-label="Decrease quantity">−</button>
+          <input type="number" id="modal-qty" value="1" min="1" readonly>
+          <button type="button" class="qty-btn" id="modal-qty-plus" aria-label="Increase quantity">+</button>
+        </div>
+        <div class="stock-info" id="modal-stock-info"></div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" id="modal-cancel">Cancel</button>
+      <button type="button" class="btn-primary" id="modal-add">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shopping Cart Panel -->
+<div class="cart-overlay" id="cart-overlay" aria-hidden="true">
+  <div class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+    <div class="cart-header">
+      <h2 id="cart-title">Shopping Cart</h2>
+      <button type="button" class="cart-close" id="cart-close" aria-label="Close cart">&times;</button>
+    </div>
+
+    <div class="cart-body" id="cart-body">
+      <!-- Cart items rendered by JavaScript -->
+    </div>
+
+    <div class="cart-footer" id="cart-footer">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span id="cart-total">Rp 0</span>
+      </div>
+      <button type="button" class="btn-primary checkout-btn" id="checkout-btn">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js?v=2"></script>
 
 </body>
 </html>
