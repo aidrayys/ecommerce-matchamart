@@ -2,14 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>MatchaMart</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
+
+<!-- Opening Screen -->
+<div id="opening-screen" class="opening-screen">
+  <div class="opening-content">
+    <div class="opening-brand">
+      <div class="opening-logo">🍵 MatchaMart</div>
+      <p class="opening-tagline">Premium Matcha &amp; Coffee Store</p>
+    </div>
+
+    <div class="opening-glass" id="opening-glass">
+      <div class="glass-lid"></div>
+      <div class="glass-body">
+        <div class="liquid">
+          <div class="ripple" id="ripple"></div>
+          <div class="bubbles" id="bubbles"></div>
+        </div>
+        <div class="straw" id="straw" role="button" tabindex="0" aria-label="Tap to prepare matcha">
+          <div class="straw-stripe"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="opening-hint" id="opening-hint">Tap the straw 3× to prepare your matcha</p>
+
+    <div class="opening-progress">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0%</div>
+    </div>
+
+    <p class="opening-status" id="opening-status">Preparing your matcha...</p>
+
+    <div class="opening-success" id="opening-success">
+      <span class="sparkle">✨</span>
+      <span>Your matcha is ready!</span>
+      <span class="sparkle">✨</span>
+    </div>
+  </div>
+
+  <button type="button" class="skip-opening" id="skip-opening">Skip this →</button>
+</div>
 
 <header>
   <div class="logo">🍵 MatchaMart</div>
@@ -20,7 +62,7 @@
 </header>
 
 <section class="hero">
-  <h1>Premium Matcha & Coffee Store</h1>
+  <h1>Premium Matcha &amp; Coffee Store</h1>
   <p>Fresh drinks, desserts, and merchandise.</p>
 </section>
 
@@ -42,6 +84,98 @@
 </section>
 
 <main>
+
+  <!-- Banner Carousel -->
+  <section class="banner-section" id="banner-section" aria-label="Promotions">
+    <div class="banner-carousel" id="banner-carousel">
+      <button type="button" class="banner-arrow banner-prev" id="banner-prev" aria-label="Previous banner">‹</button>
+
+      <div class="banner-track-wrapper">
+        <div class="banner-track" id="banner-track">
+
+          <!-- Banner 1: About MatchaMart -->
+          <div class="banner-slide banner-about is-active" data-index="0">
+            <div class="banner-shapes">
+              <span class="shape leaf">🍃</span>
+              <span class="shape star">✦</span>
+              <span class="shape dot"></span>
+              <span class="shape ring"></span>
+            </div>
+            <div class="banner-inner">
+              <div class="banner-text">
+                <span class="banner-label">About MatchaMart</span>
+                <h2>Meet MatchaMart</h2>
+                <p>MatchaMart is a mini e-commerce portfolio by Nafisah Shafa Ardia, created as a learning project for building an interactive matcha &amp; coffee store experience.</p>
+                <button type="button" class="banner-cta banner-explore" id="banner-explore">Explore the shop →</button>
+                <span class="banner-small">Drinks, desserts &amp; little things we love.</span>
+              </div>
+              <div class="banner-visual">
+                <span class="visual-main">🍵</span>
+                <span class="visual-shadow"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banner 2: Discount -->
+          <div class="banner-slide banner-discount" data-index="1">
+            <div class="banner-shapes">
+              <span class="shape leaf">🍃</span>
+              <span class="shape strawberry">🍓</span>
+              <span class="shape sparkle">✨</span>
+              <span class="shape dot"></span>
+            </div>
+            <div class="banner-discount-badge">10% OFF</div>
+            <div class="banner-inner">
+              <div class="banner-text">
+                <span class="banner-label">Special Offer</span>
+                <h2>Matcha Time, Better Price</h2>
+                <p>Enjoy 10% OFF selected Matcha drinks.</p>
+                <button type="button" class="banner-cta banner-shop-drinks" id="banner-shop-drinks">Shop Drinks →</button>
+                <span class="banner-disclaimer">Terms &amp; conditions apply.</span>
+              </div>
+              <div class="banner-visual">
+                <span class="visual-main">🥤</span>
+                <span class="visual-shadow"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banner 3: Birthday -->
+          <div class="banner-slide banner-birthday" data-index="2">
+            <div class="banner-shapes">
+              <span class="shape confetti">🎉</span>
+              <span class="shape star">✦</span>
+              <span class="shape confetti-small">🎊</span>
+              <span class="shape dot"></span>
+              <span class="shape ring"></span>
+            </div>
+            <div class="banner-inner">
+              <div class="banner-text">
+                <span class="banner-label">Birthday Treat</span>
+                <h2>It's Your Matcha Birthday!</h2>
+                <p>Make your special day a little greener. Enjoy a special MatchaMart birthday treat.</p>
+                <button type="button" class="banner-cta banner-celebrate" id="banner-celebrate">Celebrate with us →</button>
+                <span class="banner-small">Show your birthday details when ordering.</span>
+              </div>
+              <div class="banner-visual">
+                <span class="visual-main">🎂</span>
+                <span class="visual-shadow"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button type="button" class="banner-arrow banner-next" id="banner-next" aria-label="Next banner">›</button>
+    </div>
+
+    <div class="banner-dots" id="banner-dots">
+      <button type="button" class="banner-dot active" data-index="0" aria-label="Go to banner 1"></button>
+      <button type="button" class="banner-dot" data-index="1" aria-label="Go to banner 2"></button>
+      <button type="button" class="banner-dot" data-index="2" aria-label="Go to banner 3"></button>
+    </div>
+  </section>
 
   <div id="product-list" class="products"></div>
 
@@ -110,7 +244,7 @@
   </div>
 </div>
 
-<script src="script.js?v=2"></script>
+<script src="script.js?v=4"></script>
 
 </body>
 </html>

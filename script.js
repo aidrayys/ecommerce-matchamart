@@ -9,7 +9,7 @@ const products = [
     price:28000,
     stock:18,
     description:"Creamy ceremonial matcha with fresh milk.",
-    image:"img/matcha.jpg"
+    image:"img/matcha-new.jpg"
 },
 
 {
@@ -34,16 +34,36 @@ const products = [
 
 {
     id:4,
-    name:"Basque Cheesecake",
-    category:"Dessert",
+    name:"Matcha Frappe",
+    category:"Drink",
     price:35000,
-    stock:4,
-    description:"Creamy baked cheesecake with caramelized top.",
-    image:"img/cheesecake.jpg"
+    stock:12,
+    description:"Blended creamy matcha topped with a light whipped cream.",
+    image:"img/frappe.jpg"
 },
 
 {
     id:5,
+    name:"Matcha Lemonade",
+    category:"Drink",
+    price:30000,
+    stock:10,
+    description:"Refreshing citrus lemonade balanced with vibrant matcha.",
+    image:"img/lemonade.jpg"
+},
+
+{
+    id:6,
+    name:"Basque Cheesecake",
+    category:"Dessert",
+    price:35000,
+    stock:4,
+    description:"Creamy baked cheesecake with a caramelized top.",
+    image:"img/cheesecake.jpg"
+},
+
+{
+    id:7,
     name:"Matcha Cookies",
     category:"Dessert",
     price:26000,
@@ -53,13 +73,83 @@ const products = [
 },
 
 {
-    id:6,
+    id:8,
+    name:"Matcha Soft Cookies",
+    category:"Dessert",
+    price:28000,
+    stock:8,
+    description:"Soft-baked cookies with a rich matcha center.",
+    image:"img/soft-cookie.jpg"
+},
+
+{
+    id:9,
+    name:"Matcha Donut",
+    category:"Dessert",
+    price:24000,
+    stock:9,
+    description:"Fluffy donut glazed with sweet matcha cream.",
+    image:"img/donut.jpg"
+},
+
+{
+    id:10,
+    name:"Matcha Croissant",
+    category:"Dessert",
+    price:32000,
+    stock:6,
+    description:"Buttery flaky croissant filled with smooth matcha cream.",
+    image:"img/croissant.jpg"
+},
+
+{
+    id:11,
     name:"Matcha Tumbler",
     category:"Merch",
     price:89000,
     stock:7,
     description:"Minimal reusable tumbler for everyday drinks.",
     image:"img/tumbler.jpg"
+},
+
+{
+    id:12,
+    name:"Matcha Tote Bag",
+    category:"Merch",
+    price:75000,
+    stock:10,
+    description:"Reusable canvas tote bag with a minimal MatchaMart design.",
+    image:"img/totebag.jpg"
+},
+
+{
+    id:13,
+    name:"Matcha Cap",
+    category:"Merch",
+    price:69000,
+    stock:8,
+    description:"Minimal everyday cap with a subtle MatchaMart logo.",
+    image:"img/cap.jpg"
+},
+
+{
+    id:14,
+    name:"Matcha Scarf",
+    category:"Merch",
+    price:85000,
+    stock:5,
+    description:"Soft lightweight scarf with a minimal matcha-inspired pattern.",
+    image:"img/scarf.jpg"
+},
+
+{
+    id:15,
+    name:"Matcha Mug",
+    category:"Merch",
+    price:65000,
+    stock:9,
+    description:"Ceramic mug made for cozy matcha and coffee moments.",
+    image:"img/mug.jpg"
 }
 
 ];
@@ -101,12 +191,22 @@ const CUSTOMIZATION_CONFIG = {
             {
                 name:"color",
                 label:"Color",
-                options:["Green","Pink"],
+                options:["Green","Pink","Cream","Natural","Beige","Matcha Green"],
                 default:"Green"
             }
         ]
     }
 
+};
+
+// OPSI WARNA SPESIFIK PER PRODUK MERCH
+
+const MERCH_COLOR_OPTIONS = {
+    "Matcha Tumbler":["Green","Pink"],
+    "Matcha Tote Bag":["Natural","Matcha Green"],
+    "Matcha Cap":["Green","Cream"],
+    "Matcha Scarf":["Matcha Green","Beige"],
+    "Matcha Mug":["Green","Cream"]
 };
 
 // CART
@@ -170,7 +270,9 @@ function tampilProduk(data){
 
         <div class="card">
 
-            <img src="${item.image}" alt="${item.name}">
+            <div class="product-image">
+                <img src="${item.image}" alt="${item.name}">
+            </div>
 
             <div class="content">
 
@@ -301,9 +403,27 @@ function renderCustomizationOptions(product){
 
     modalOptions.innerHTML="";
 
-    const config=CUSTOMIZATION_CONFIG[product.category];
+    let config=CUSTOMIZATION_CONFIG[product.category];
 
     if(!config || !config.groups) return;
+
+    // Clone config agar tidak memodifikasi object asli
+    config=JSON.parse(JSON.stringify(config));
+
+    // Sesuaikan opsi warna untuk produk merch tertentu
+    if(product.category==="Merch"){
+        const specificColors=MERCH_COLOR_OPTIONS[product.name];
+        if(specificColors){
+            config.groups.forEach(group=>{
+                if(group.name==="color"){
+                    group.options=specificColors;
+                    if(!specificColors.includes(group.default)){
+                        group.default=specificColors[0];
+                    }
+                }
+            });
+        }
+    }
 
     config.groups.forEach(group=>{
 
@@ -413,9 +533,25 @@ function getCustomizationData(){
 
     if(!modalProduct) return data;
 
-    const config=CUSTOMIZATION_CONFIG[modalProduct.category];
+    let config=CUSTOMIZATION_CONFIG[modalProduct.category];
 
     if(config && config.groups){
+
+        config=JSON.parse(JSON.stringify(config));
+
+        if(modalProduct.category==="Merch"){
+            const specificColors=MERCH_COLOR_OPTIONS[modalProduct.name];
+            if(specificColors){
+                config.groups.forEach(group=>{
+                    if(group.name==="color"){
+                        group.options=specificColors;
+                        if(!specificColors.includes(group.default)){
+                            group.default=specificColors[0];
+                        }
+                    }
+                });
+            }
+        }
 
         config.groups.forEach(group=>{
 
@@ -735,6 +871,339 @@ checkoutBtn.addEventListener("click",function(){
 
 });
 
-// LOAD AWAL
+// ===========================
+// OPENING SCREEN
+// ===========================
 
-tampilProduk(products);
+const openingScreen=document.getElementById("opening-screen");
+const straw=document.getElementById("straw");
+const ripple=document.getElementById("ripple");
+const bubblesContainer=document.getElementById("bubbles");
+const progressFill=document.getElementById("progress-fill");
+const progressText=document.getElementById("progress-text");
+const openingStatus=document.getElementById("opening-status");
+const openingHint=document.getElementById("opening-hint");
+const openingSuccess=document.getElementById("opening-success");
+const skipOpening=document.getElementById("skip-opening");
+
+let tapCount=0;
+let openingCompleted=false;
+
+const OPENING_MESSAGES=[
+    "Preparing your matcha...",
+    "Mixing the matcha...",
+    "Adding the good stuff...",
+    "Your matcha is ready!"
+];
+
+function updateOpeningProgress(){
+
+    const progress=tapCount>=3 ? 100 : tapCount * 33;
+
+    progressFill.style.width=progress + "%";
+    progressText.textContent=progress + "%";
+    openingStatus.textContent=OPENING_MESSAGES[tapCount];
+
+}
+
+function createBubbles(){
+
+    for(let i=0;i<6;i++){
+        const bubble=document.createElement("span");
+        bubble.className="bubble";
+        const size=Math.random()*10 + 6;
+        bubble.style.width=size + "px";
+        bubble.style.height=size + "px";
+        bubble.style.left=(Math.random()*80 + 10) + "%";
+        bubble.style.bottom=(Math.random()*20 + 10) + "%";
+        bubble.style.animationDelay=(Math.random()*0.4) + "s";
+        bubblesContainer.appendChild(bubble);
+
+        setTimeout(()=>{
+            bubble.remove();
+        },1200);
+    }
+
+}
+
+function animateStrawTap(){
+
+    if(openingCompleted) return;
+
+    // Debounce: jangan izinkan tap saat animasi straw berjalan
+    if(straw.classList.contains("stir")) return;
+
+    tapCount++;
+    if(tapCount>3){
+        tapCount=3;
+        return;
+    }
+
+    // Animasi straw
+    straw.classList.add("stir");
+    setTimeout(()=>straw.classList.remove("stir"),550);
+
+    // Ripple effect
+    ripple.classList.remove("animate");
+    void ripple.offsetWidth; // force reflow
+    ripple.classList.add("animate");
+
+    // Bubble effect
+    createBubbles();
+
+    updateOpeningProgress();
+
+    if(tapCount===1){
+        openingHint.textContent="Keep tapping...";
+    }
+    else if(tapCount===2){
+        openingHint.textContent="One more stir!";
+    }
+    else if(tapCount===3){
+        openingHint.style.display="none";
+        openingSuccess.classList.add("show");
+        openingCompleted=true;
+
+        setTimeout(()=>{
+            hideOpeningScreen();
+        },900);
+    }
+
+}
+
+function hideOpeningScreen(){
+
+    openingScreen.classList.add("hidden");
+    setTimeout(()=>{
+        openingScreen.style.display="none";
+    },600);
+
+}
+
+straw.addEventListener("click",animateStrawTap);
+straw.addEventListener("keydown",function(e){
+    if(e.key==="Enter" || e.key===" "){
+        e.preventDefault();
+        animateStrawTap();
+    }
+});
+
+skipOpening.addEventListener("click",function(){
+
+    if(openingCompleted) return;
+    tapCount=3;
+    updateOpeningProgress();
+    openingCompleted=true;
+    openingHint.style.display="none";
+    hideOpeningScreen();
+
+});
+
+// ===========================
+// BANNER CAROUSEL
+// ===========================
+
+const bannerTrack=document.getElementById("banner-track");
+const bannerSlides=document.querySelectorAll(".banner-slide");
+const bannerDots=document.querySelectorAll(".banner-dot");
+const bannerPrev=document.getElementById("banner-prev");
+const bannerNext=document.getElementById("banner-next");
+const bannerCarousel=document.getElementById("banner-carousel");
+
+let currentBanner=0;
+const totalBanners=bannerSlides.length;
+let autoSlideInterval;
+let startX=0;
+let currentX=0;
+let isDragging=false;
+
+function getBannerGap(){
+    const gap=getComputedStyle(bannerTrack).gap;
+    return parseFloat(gap) || 0;
+}
+
+function getBannerSlideWidth(){
+    return bannerSlides[0] ? bannerSlides[0].offsetWidth : 0;
+}
+
+function updateActiveBanner(){
+
+    bannerSlides.forEach((slide,i)=>{
+        slide.classList.toggle("is-active",i===currentBanner);
+    });
+
+    bannerDots.forEach((dot,i)=>{
+        dot.classList.toggle("active",i===currentBanner);
+    });
+
+}
+
+function updateBannerPosition(){
+
+    const slideWidth=getBannerSlideWidth();
+    const gap=getBannerGap();
+    const offset=currentBanner * (slideWidth + gap);
+
+    bannerTrack.style.transform=`translateX(-${offset}px)`;
+
+}
+
+function goToBanner(index){
+
+    if(index<0) index=totalBanners-1;
+    if(index>=totalBanners) index=0;
+
+    currentBanner=index;
+    updateBannerPosition();
+    updateActiveBanner();
+
+}
+
+function nextBanner(){
+    goToBanner(currentBanner+1);
+}
+
+function prevBanner(){
+    goToBanner(currentBanner-1);
+}
+
+function startAutoSlide(){
+    stopAutoSlide();
+    autoSlideInterval=setInterval(nextBanner,5500);
+}
+
+function stopAutoSlide(){
+    if(autoSlideInterval){
+        clearInterval(autoSlideInterval);
+        autoSlideInterval=null;
+    }
+}
+
+bannerPrev.addEventListener("click",function(){
+    prevBanner();
+    startAutoSlide();
+});
+
+bannerNext.addEventListener("click",function(){
+    nextBanner();
+    startAutoSlide();
+});
+
+document.getElementById("banner-dots").addEventListener("click",function(e){
+
+    const dot=e.target.closest(".banner-dot");
+    if(!dot) return;
+
+    const index=parseInt(dot.dataset.index);
+    goToBanner(index);
+    startAutoSlide();
+
+});
+
+// Touch / swipe support
+bannerTrack.addEventListener("touchstart",function(e){
+    startX=e.touches[0].clientX;
+    isDragging=true;
+    stopAutoSlide();
+},{passive:true});
+
+bannerTrack.addEventListener("touchmove",function(e){
+    if(!isDragging) return;
+    currentX=e.touches[0].clientX;
+},{passive:true});
+
+bannerTrack.addEventListener("touchend",function(){
+
+    if(!isDragging) return;
+    isDragging=false;
+
+    const diff=startX-currentX;
+    const threshold=50;
+
+    if(Math.abs(diff)>threshold){
+        if(diff>0){
+            nextBanner();
+        }
+        else{
+            prevBanner();
+        }
+    }
+
+    startAutoSlide();
+
+});
+
+// Mouse drag support for desktop
+bannerTrack.addEventListener("mousedown",function(e){
+    startX=e.clientX;
+    isDragging=true;
+    stopAutoSlide();
+});
+
+bannerTrack.addEventListener("mousemove",function(e){
+    if(!isDragging) return;
+    currentX=e.clientX;
+});
+
+bannerTrack.addEventListener("mouseup",function(){
+
+    if(!isDragging) return;
+    isDragging=false;
+
+    const diff=startX-currentX;
+    const threshold=50;
+
+    if(Math.abs(diff)>threshold){
+        if(diff>0){
+            nextBanner();
+        }
+        else{
+            prevBanner();
+        }
+    }
+
+    startAutoSlide();
+
+});
+
+bannerTrack.addEventListener("mouseleave",function(){
+    if(isDragging){
+        isDragging=false;
+        startAutoSlide();
+    }
+});
+
+// Recalculate position on resize
+window.addEventListener("resize",function(){
+    updateBannerPosition();
+});
+
+// CTA banner actions
+
+document.getElementById("banner-explore").addEventListener("click",function(){
+
+    document.getElementById("product-list").scrollIntoView({ behavior:"smooth", block:"start" });
+
+});
+
+document.getElementById("banner-shop-drinks").addEventListener("click",function(){
+
+    categorySelect.value="Drink";
+    applyFilter();
+    document.getElementById("product-list").scrollIntoView({ behavior:"smooth", block:"start" });
+
+});
+
+document.getElementById("banner-celebrate").addEventListener("click",function(){
+
+    document.getElementById("product-list").scrollIntoView({ behavior:"smooth", block:"start" });
+
+});
+
+// ===========================
+// INIT
+// ===========================
+
+applyFilter();
+goToBanner(0);
+startAutoSlide();
