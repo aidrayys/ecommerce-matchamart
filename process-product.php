@@ -2,12 +2,16 @@
 
 include "db.php";
 
-$nama_produk = $_POST["nama_produk"];
-$harga = $_POST["harga"];
-$deskripsi = $_POST["deskripsi"];
+$nama_produk = $_POST["nama_produk"] ?? "";
+$kategori = $_POST["kategori"] ?? "";
+$harga = $_POST["harga"] ?? "";
+$deskripsi = $_POST["deskripsi"] ?? "";
+$stok = $_POST["stok"] ?? 0;
+$image = $_POST["image"] ?? "";
 
 if (
     empty($nama_produk) ||
+    empty($kategori) ||
     empty($harga) ||
     empty($deskripsi)
 ) {
@@ -16,20 +20,29 @@ if (
 
 } else {
 
-    $sql = "INSERT INTO products
-            (nama_produk, harga, deskripsi, stok)
-            VALUES
-            ('$nama_produk', '$harga', '$deskripsi', 0)";
+    $harga = (int) $harga;
+    $stok = (int) $stok;
+    $image = trim($image);
 
-    if ($conn->query($sql) === TRUE) {
+    $sql = "INSERT INTO products
+            (nama_produk, kategori, harga, deskripsi, stok, image)
+            VALUES
+            (?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssisis", $nama_produk, $kategori, $harga, $deskripsi, $stok, $image);
+
+    if ($stmt->execute() === TRUE) {
 
         echo "Produk berhasil ditambahkan!";
 
     } else {
 
-        echo "Error: " . $conn->error;
+        echo "Error: " . $stmt->error;
 
     }
+
+    $stmt->close();
 
 }
 

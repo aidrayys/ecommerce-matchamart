@@ -1,3 +1,65 @@
+<?php
+require_once "db.php";
+
+$allowedCategories = ["Drink", "Dessert", "Merch"];
+$selectedCategory = isset($_GET["kategori"]) ? $_GET["kategori"] : "all";
+
+if ($selectedCategory !== "all" && !in_array($selectedCategory, $allowedCategories, true)) {
+    $selectedCategory = "all";
+}
+
+if ($selectedCategory === "all") {
+    $sql = "SELECT * FROM products ORDER BY id ASC";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql = "SELECT * FROM products WHERE kategori = ? ORDER BY id ASC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $selectedCategory);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+$products = [];
+while ($row = $result->fetch_assoc()) {
+    $products[] = [
+        "id" => (int) $row["id"],
+        "name" => $row["nama_produk"],
+        "category" => $row["kategori"],
+        "price" => (int) $row["harga"],
+        "stock" => (int) $row["stok"],
+        "description" => $row["deskripsi"],
+        "image" => $row["image"]
+    ];
+}
+
+$stmt->close();
+$conn->close();
+
+function formatRupiah($number) {
+    return "Rp " . number_format($number, 0, ",", ".");
+}
+
+function stockClass($stock) {
+    if ($stock == 0) {
+        return "out";
+    } elseif ($stock <= 5) {
+        return "limited";
+    } else {
+        return "available";
+    }
+}
+
+function stockLabel($stock) {
+    if ($stock == 0) {
+        return "Out of Stock";
+    } elseif ($stock <= 5) {
+        return "Limited Stock";
+    } else {
+        return "Available";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +70,9 @@
   <meta http-equiv="Expires" content="0">
   <title>MatchaMart</title>
   <link rel="stylesheet" href="style.css?v=4">
+  <script>
+    window.__PRODUCTS__ = <?= json_encode($products, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+  </script>
 </head>
 <body>
 
@@ -75,10 +140,10 @@
   >
 
   <select id="category">
-    <option value="all">All Categories</option>
-    <option value="Drink">Drink</option>
-    <option value="Dessert">Dessert</option>
-    <option value="Merch">Merch</option>
+    <option value="all" <?= $selectedCategory === "all" ? "selected" : "" ?>>All Categories</option>
+    <option value="Drink" <?= $selectedCategory === "Drink" ? "selected" : "" ?>>Drink</option>
+    <option value="Dessert" <?= $selectedCategory === "Dessert" ? "selected" : "" ?>>Dessert</option>
+    <option value="Merch" <?= $selectedCategory === "Merch" ? "selected" : "" ?>>Merch</option>
   </select>
 
 </section>
@@ -177,7 +242,49 @@
     </div>
   </section>
 
-  <div id="product-list" class="products"></div>
+  <div id="product-list" class="products">
+    <?php if (count($products) === 0): ?>
+      <div class="empty">
+        <h2>Product Not Found</h2>
+        <p>No products in this category.</p>
+      </div>
+    <?php else: ?>
+      <?php foreach ($products as $p):
+        $stockClass = stockClass($p["stock"]);
+        $stockLabel = stockLabel($p["stock"]);
+        $btnText = $p["stock"] === 0 ? "Sold Out" : "Add to Cart";
+        $disabledAttr = $p["stock"] === 0 ? "disabled" : "";
+      ?>
+        <div class="card"
+             data-id="<?= $p["id"] ?>"
+             data-name="<?= htmlspecialchars($p["name"], ENT_QUOTES, "UTF-8") ?>"
+             data-category="<?= htmlspecialchars($p["category"], ENT_QUOTES, "UTF-8") ?>"
+             data-price="<?= $p["price"] ?>"
+             data-stock="<?= $p["stock"] ?>"
+             data-image="<?= htmlspecialchars($p["image"], ENT_QUOTES, "UTF-8") ?>">
+          <div class="product-image">
+            <img src="<?= htmlspecialchars($p["image"]) ?>" alt="<?= htmlspecialchars($p["name"]) ?>">
+          </div>
+          <div class="content">
+            <span class="category"><?= htmlspecialchars($p["category"]) ?></span>
+            <h3><?= htmlspecialchars($p["name"]) ?></h3>
+            <p class="desc"><?= htmlspecialchars($p["description"]) ?></p>
+            <div class="price"><?= formatRupiah($p["price"]) ?></div>
+            <div class="stock <?= $stockClass ?>">
+              Stock : <?= $p["stock"] ?> • <?= $stockLabel ?>
+            </div>
+            <button class="add-to-cart-btn" data-id="<?= $p["id"] ?>" <?= $disabledAttr ?>>
+              <?= $btnText ?>
+            </button>
+          </div>
+        </div>
+      <?php endforeach; ?>
+      <div id="no-products" class="empty" style="display:none;">
+        <h2>Product Not Found</h2>
+        <p>Try another keyword.</p>
+      </div>
+    <?php endif; ?>
+  </div>
 
 </main>
 

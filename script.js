@@ -1,158 +1,6 @@
-// ARRAY DATA PRODUK
+// ARRAY DATA PRODUK (diambil dari PHP/MySQL melalui window.__PRODUCTS__)
 
-const products = [
-
-{
-    id:1,
-    name:"Matcha Latte",
-    category:"Drink",
-    price:28000,
-    stock:18,
-    description:"Creamy ceremonial matcha with fresh milk.",
-    image:"img/matcha-new.jpg"
-},
-
-{
-    id:2,
-    name:"Strawberry Matcha",
-    category:"Drink",
-    price:32000,
-    stock:10,
-    description:"Sweet strawberry blended with premium matcha.",
-    image:"img/strawberry.jpg"
-},
-
-{
-    id:3,
-    name:"Iced Americano",
-    category:"Drink",
-    price:22000,
-    stock:15,
-    description:"Bold arabica coffee served over ice.",
-    image:"img/americano.jpg"
-},
-
-{
-    id:4,
-    name:"Matcha Frappe",
-    category:"Drink",
-    price:35000,
-    stock:12,
-    description:"Blended creamy matcha topped with a light whipped cream.",
-    image:"img/frappe.jpg"
-},
-
-{
-    id:5,
-    name:"Matcha Lemonade",
-    category:"Drink",
-    price:30000,
-    stock:10,
-    description:"Refreshing citrus lemonade balanced with vibrant matcha.",
-    image:"img/lemonade.jpg"
-},
-
-{
-    id:6,
-    name:"Basque Cheesecake",
-    category:"Dessert",
-    price:35000,
-    stock:4,
-    description:"Creamy baked cheesecake with a caramelized top.",
-    image:"img/cheesecake.jpg"
-},
-
-{
-    id:7,
-    name:"Matcha Cookies",
-    category:"Dessert",
-    price:26000,
-    stock:0,
-    description:"Crunchy butter cookies infused with matcha.",
-    image:"img/cookie.jpg"
-},
-
-{
-    id:8,
-    name:"Matcha Soft Cookies",
-    category:"Dessert",
-    price:28000,
-    stock:8,
-    description:"Soft-baked cookies with a rich matcha center.",
-    image:"img/soft-cookie.jpg"
-},
-
-{
-    id:9,
-    name:"Matcha Donut",
-    category:"Dessert",
-    price:24000,
-    stock:9,
-    description:"Fluffy donut glazed with sweet matcha cream.",
-    image:"img/donut.jpg"
-},
-
-{
-    id:10,
-    name:"Matcha Croissant",
-    category:"Dessert",
-    price:32000,
-    stock:6,
-    description:"Buttery flaky croissant filled with smooth matcha cream.",
-    image:"img/croissant.jpg"
-},
-
-{
-    id:11,
-    name:"Matcha Tumbler",
-    category:"Merch",
-    price:89000,
-    stock:7,
-    description:"Minimal reusable tumbler for everyday drinks.",
-    image:"img/tumbler.jpg"
-},
-
-{
-    id:12,
-    name:"Matcha Tote Bag",
-    category:"Merch",
-    price:75000,
-    stock:10,
-    description:"Reusable canvas tote bag with a minimal MatchaMart design.",
-    image:"img/totebag.jpg"
-},
-
-{
-    id:13,
-    name:"Matcha Cap",
-    category:"Merch",
-    price:69000,
-    stock:8,
-    description:"Minimal everyday cap with a subtle MatchaMart logo.",
-    image:"img/cap.jpg"
-},
-
-{
-    id:14,
-    name:"Matcha Scarf",
-    category:"Merch",
-    price:85000,
-    stock:5,
-    description:"Soft lightweight scarf with a minimal matcha-inspired pattern.",
-    image:"img/scarf.jpg"
-},
-
-{
-    id:15,
-    name:"Matcha Mug",
-    category:"Merch",
-    price:65000,
-    stock:9,
-    description:"Ceramic mug made for cozy matcha and coffee moments.",
-    image:"img/mug.jpg"
-}
-
-];
+const products = window.__PRODUCTS__ || [];
 
 // KONFIGURASI CUSTOMIZATION BERDASARKAN KATEGORI
 
@@ -240,69 +88,33 @@ function getStockStatus(stock){
 
 }
 
-// MENAMPILKAN PRODUK
+// UPDATE TAMPILAN STOCK DAN TOMBOL PADA PRODUCT CARD
 
-function tampilProduk(data){
+function updateProductCard(product){
 
-    const container=document.getElementById("product-list");
+    const card=document.querySelector(`.card[data-id="${product.id}"]`);
+    if(!card) return;
 
-    container.innerHTML="";
+    card.dataset.stock=product.stock;
 
-    if(data.length===0){
-
-        container.innerHTML=`
-        <div class="empty">
-            <h2>Product Not Found</h2>
-            <p>Try another keyword.</p>
-        </div>
-        `;
-
-        return;
-
+    const stockEl=card.querySelector(".stock");
+    if(stockEl){
+        const { status, color }=getStockStatus(product.stock);
+        stockEl.className="stock " + color;
+        stockEl.textContent=`Stock : ${product.stock} • ${status}`;
     }
 
-    data.forEach(item=>{
-
-        const { status, color }=getStockStatus(item.stock);
-        const btnText=item.stock===0 ? "Sold Out" : "Add to Cart";
-
-        container.innerHTML +=`
-
-        <div class="card">
-
-            <div class="product-image">
-                <img src="${item.image}" alt="${item.name}">
-            </div>
-
-            <div class="content">
-
-                <span class="category">${item.category}</span>
-
-                <h3>${item.name}</h3>
-
-                <p class="desc">${item.description}</p>
-
-                <div class="price">${rupiah(item.price)}</div>
-
-                <div class="stock ${color}">
-                    Stock : ${item.stock} • ${status}
-                </div>
-
-                <button
-                    class="add-to-cart-btn"
-                    data-id="${item.id}"
-                    ${item.stock===0 ? "disabled" : ""}
-                >
-                    ${btnText}
-                </button>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
+    const btn=card.querySelector(".add-to-cart-btn");
+    if(btn){
+        if(product.stock===0){
+            btn.disabled=true;
+            btn.textContent="Sold Out";
+        }
+        else{
+            btn.disabled=false;
+            btn.textContent="Add to Cart";
+        }
+    }
 
 }
 
@@ -324,23 +136,46 @@ const searchInput=document.getElementById("search");
 const categorySelect=document.getElementById("category");
 
 searchInput.addEventListener("keyup",applyFilter);
-categorySelect.addEventListener("change",applyFilter);
+
+categorySelect.addEventListener("change",function(){
+
+    const value=categorySelect.value;
+
+    if(value==="all"){
+        window.location.href="index.php";
+    }
+    else{
+        window.location.href="index.php?kategori=" + encodeURIComponent(value);
+    }
+
+});
 
 function applyFilter(){
 
-    const keyword=searchInput.value.toLowerCase();
-    const selected=categorySelect.value;
+    const keyword=searchInput.value.toLowerCase().trim();
+    const cards=document.querySelectorAll("#product-list .card");
 
-    const result=products.filter(item=>{
+    let visibleCount=0;
 
-        const cocokNama=item.name.toLowerCase().includes(keyword);
-        const cocokKategori=selected==="all" || item.category===selected;
+    cards.forEach(card=>{
 
-        return cocokNama && cocokKategori;
+        const name=(card.dataset.name || "").toLowerCase();
+        const match=name.includes(keyword);
+
+        if(match){
+            card.style.display="";
+            visibleCount++;
+        }
+        else{
+            card.style.display="none";
+        }
 
     });
 
-    tampilProduk(result);
+    const emptyMsg=document.getElementById("no-products");
+    if(emptyMsg){
+        emptyMsg.style.display=visibleCount===0 ? "block" : "none";
+    }
 
 }
 
@@ -613,6 +448,7 @@ function addCustomizedProductToCart(){
     modalProduct.stock -= modalQuantity;
 
     updateCartCounter();
+    updateProductCard(modalProduct);
     applyFilter();
     renderCart();
     closeCustomizationModal();
@@ -836,6 +672,7 @@ function updateCartQuantity(key,delta){
     }
 
     updateCartCounter();
+    updateProductCard(product);
     applyFilter();
     renderCart();
 
@@ -853,6 +690,7 @@ function removeFromCart(key){
 
     if(product){
         product.stock += item.quantity;
+        updateProductCard(product);
     }
 
     cart.splice(index,1);
@@ -1188,9 +1026,7 @@ document.getElementById("banner-explore").addEventListener("click",function(){
 
 document.getElementById("banner-shop-drinks").addEventListener("click",function(){
 
-    categorySelect.value="Drink";
-    applyFilter();
-    document.getElementById("product-list").scrollIntoView({ behavior:"smooth", block:"start" });
+    window.location.href="index.php?kategori=Drink";
 
 });
 
